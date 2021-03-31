@@ -45,12 +45,13 @@ Parameters
 - `width` - desired width list (height is automatically scaled)
 - `quality` - (0 to 100)
 - `disablePrefix` 
-  - `false` - **default** in this case images with number prefixes are resized (e.g. `4-good-view-zweisimmen-north.jpeg`)
-  - `true` - all images in the directory are considered for transformation
-  - when set to true considers all images in folder (default `false`)
+  - `false` - **default** in this case ONLY images with number prefixes are resized (e.g. `4-good-view-zweisimmen-north.jpeg`)
+  - `true` - all images in the directory are considered for resizing
 - `imgDir` (optional) - **absolute path** where the images are found 
   - the resized images are placed in the `${imgDir}/resized` directory
   - if this parameter is not provided the program expects that the images are placed in the [images/input](images/input)
   directory. Resized images are then placed in [images/resized](images/resized) directory
   - tested only in MacOS. Should work fine in Linux OS. For Windows place the images in the `input` directory
   as mentioned above
+
+> You can use Postman or similar tools to execute the POST commands above if you are more comfortable with these tools
