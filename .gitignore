@@ -37,11 +37,9 @@ npm-debug.log
 # Generated test coverage reports
 .nyc_output
 
-
 .env
 
 nodemon.json
 
-/documentation/keycloak/get-access-token.local-dev.md
-!/images/resized/
-!/images/input/
+images/resized
+images/input
