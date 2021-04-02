@@ -1,10 +1,9 @@
 Batch image resize api
 ---
 
-ExpressJS API to help you resize the images from absolute path directory (`imgDir`) if provided, otherwise from [images/input](images/input) folder
-and places the transformed images either in `${imgDir}/resized` or [images/resized](images/resized).
+ExpressJS API to help you resize images from a directory and generate new ones in the `resized` subfolder.
 
-> See instruction below 
+> See the `curl` examples below and parameters to understand how to use it
 
 ### Installation and start the server
 
@@ -13,8 +12,8 @@ npm installl
 npm start
 ```
 
-### Execute **resizing** with curl
-With absolute directory path where are stored the images
+### Execute **resizing** examples with curl
+With directory, where you provide the absolute path where the images are stored
 ```
 curl -0 -v -X POST localhost:9000/resize \
 -H 'Content-Type: application/json; charset=utf-8' \
@@ -22,13 +21,14 @@ curl -0 -v -X POST localhost:9000/resize \
 {
     "width": 1200,
     "quality": 90,
-    "disablePrefix": false,
+    "numberPrefixOnly": false,
     "imgDir": "/Users/ama/Desktop/post-zweisimmen"
 }
 EOF
 ```
 
-Without `imgDir`
+No image directory provided, images from [images](images) folder of the project are used and only images starting 
+with a number and dash are resized (`numberPrefixOnly` is true):
 ```
 curl -0 -v -X POST localhost:9000/resize \
 -H 'Content-Type: application/json; charset=utf-8' \
@@ -36,21 +36,21 @@ curl -0 -v -X POST localhost:9000/resize \
 {
     "width": 1200,
     "quality": 90,
-    "disablePrefix": false
+    "numberPrefixOnly": true
 }
 EOF
 ```
 
 Parameters
-- `width` - desired width list (height is automatically scaled)
+- `width` - **required** desired width list (height is automatically scaled)
 - `quality` - (0 to 100)
-- `disablePrefix` 
-  - `false` - **default** in this case ONLY images with number prefixes are resized (e.g. `4-good-view-zweisimmen-north.jpeg`)
-  - `true` - all images in the directory are considered for resizing
-- `imgDir` (optional) - **absolute path** where the images are found 
-  - the resized images are placed in the `${imgDir}/resized` directory
-  - if this parameter is not provided the program expects that the images are placed in the [images/input](images/input)
-  directory. Resized images are then placed in [images/resized](images/resized) directory
+- `numberPrefixOnly` 
+  - `false` - **default** all images in the directory are considered for resizing 
+  - `true` - **ONLY** images with number prefixes are resized (e.g. `4-good-view-zweisimmen-north.jpeg`)
+- `imgDir` (optional) - **absolute path** where the images are stored 
+  - the resized images are placed in the `${imgDir}/resized` sub-directory
+  - if this parameter is not provided the program expects that the images are placed in the [images](images)
+  directory. Resized images are then generated in [images/resized](images/resized) directory
   - tested only in MacOS. Should work fine in Linux OS. For Windows place the images in the `input` directory
   as mentioned above
 

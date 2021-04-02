@@ -9,32 +9,41 @@ const util = require('util');
 
 const readdir = util.promisify(fs.readdir);
 
-
-
 router.post('/', async (request, response) => {
-    const {width, quality} = request.body;
-    const disablePrefix = request.body.disablePrefix === undefined ? false :  request.body.disablePrefix;
-
-    let imgDir = 'images/input';//fallback to images in input folder if no path is provided
-    let outputImgDir = path.join(__dirname, `../images/resized`);
-    if(request.body.imgDir) {
-        imgDir = request.body.imgDir;
-        outputImgDir = `${imgDir}/resized`;
+    const {width} = request.body;
+    if ( !width ) {
+        response.status(400).send({"validation_error": "desired width is mandatory"});
     }
+    const quality = request.body.quality || 100;
+    const numberPrefixOnly = request.body.numberPrefixOnly || false;
 
-    const images = await readdir(imgDir);
+    const imgDir = request.body.imgDir || 'images';//fallback to images in input folder if no path is provided
+    const outputImgDir = `${imgDir}/resized`;
 
-    for ( const file of images ) {
-        if (disablePrefix || !disablePrefix && file.match(/^\d/)) {
-            const image = await Jimp.read(`${imgDir}/${file}`);
-            await image.resize(width, Jimp.AUTO);
-            await image.quality(quality);
+    let files = await readdir(imgDir, {withFileTypes: true});
 
-            const photoNumber = file.substring(0, file.indexOf('-'));
-            const newFileName = `${photoNumber}-${width}x${image.bitmap.height}-${file.substring(file.indexOf('-') + 1, file.length)}`;
-            await image.writeAsync(`${outputImgDir}/${newFileName}`);
-            console.log(`${outputImgDir}/${newFileName}`);
+    files = files.filter(file => {
+        if ( numberPrefixOnly ) {
+            return file.name.match(/^\d/) && file.name.match(/\.(jpe?g|png|gif)$/)
+        } else {
+            return file.name.match(/\.(jpe?g|png|gif)$/)
         }
+    });
+
+    for ( const file of files ) {
+        const image = await Jimp.read(`${imgDir}/${file.name}`);
+        await image.resize(width, Jimp.AUTO);
+        await image.quality(quality);
+        let newFileName = '';
+        if ( file.name.match(/^\d/) ) {
+            const photoNumber = file.name.substring(0, file.name.indexOf('-'));
+            newFileName = `${photoNumber}-${width}x${image.bitmap.height}-${file.name.substring(file.name.indexOf('-') + 1, file.length)}`;
+        } else {
+            newFileName = `${width}x${image.bitmap.height}-${file.name}`;
+        }
+
+        await image.writeAsync(`${outputImgDir}/${newFileName}`);
+        console.log(`${outputImgDir}/${newFileName}`);
     }
 
     return response.status(201).send();

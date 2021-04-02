@@ -41,5 +41,4 @@ npm-debug.log
 
 nodemon.json
 
-images/resized
-images/input
+images
