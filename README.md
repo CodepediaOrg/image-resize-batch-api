@@ -27,8 +27,9 @@ curl -0 -v -X POST localhost:9000/resize \
 EOF
 ```
 
-No image directory provided, images from [images](images) folder of the project are used and only images starting 
-with a number and dash are resized (`numberPrefixOnly` is true):
+> If **no image directory** (`imgDir`) is provided, then the images from [images](images) folder of the project are used.
+
+In the following example only images starting with a number and dash are resized (`numberPrefixOnly` is `true`):
 ```
 curl -0 -v -X POST localhost:9000/resize \
 -H 'Content-Type: application/json; charset=utf-8' \
