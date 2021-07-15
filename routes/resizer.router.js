@@ -31,6 +31,7 @@ router.post('/', async (request, response) => {
     });
 
     for ( const file of files ) {
+        console.log('Processing image - ', file.name);
         const image = await Jimp.read(`${imgDir}/${file.name}`);
         await image.resize(width, Jimp.AUTO);
         await image.quality(quality);

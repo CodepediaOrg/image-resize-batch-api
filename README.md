@@ -13,16 +13,18 @@ npm start
 ```
 
 ### Execute **resizing** examples with curl
+
 With directory, where you provide the absolute path where the images are stored
+
 ```
 curl -0 -v -X POST localhost:9000/resize \
 -H 'Content-Type: application/json; charset=utf-8' \
 --data-binary @- << EOF
 {
-    "width": 1200,
+    "width": 1440,
     "quality": 90,
     "numberPrefixOnly": false,
-    "imgDir": "/Users/ama/Desktop/post-zweisimmen"
+    "imgDir": "/Users/ama/tmp/2021.07.05-männlichen-cu-bunicii"
 }
 EOF
 ```
@@ -30,6 +32,7 @@ EOF
 > If **no image directory** (`imgDir`) is provided, then the images from [images](images) folder of the project are used.
 
 In the following example only images starting with a number and dash are resized (`numberPrefixOnly` is `true`):
+
 ```
 curl -0 -v -X POST localhost:9000/resize \
 -H 'Content-Type: application/json; charset=utf-8' \
@@ -56,3 +59,15 @@ Parameters
   as mentioned above
 
 > You can use Postman or similar tools to execute the POST commands above if you are more comfortable with these tools
+
+### Generate a template post from files
+
+The following command generates a blog post template page (e.g. `2021-07-14-change-me.md`) with images from
+the list in [input/image-paths.txt](input/image-paths.txt) 
+
+```
+curl -0 -v -X POST localhost:9000/generate-blogpost
+```
+
+
+
