@@ -21,10 +21,11 @@ curl -0 -v -X POST localhost:9000/resize \
 -H 'Content-Type: application/json; charset=utf-8' \
 --data-binary @- << EOF
 {
-    "width": 1440,
+    "width": 1200,
     "quality": 90,
     "numberPrefixOnly": false,
-    "imgDir": "/Users/ama/tmp/2021.07.05-männlichen-cu-bunicii"
+    "imgDir": "/Users/ama/projects/bitcoinrun/bitcoinrun.art/assets/images/runs/27-lausanne/city",
+    "outputImgExt": "jpg"
 }
 EOF
 ```

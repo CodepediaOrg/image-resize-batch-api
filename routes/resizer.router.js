@@ -9,13 +9,17 @@ const util = require('util');
 
 const readdir = util.promisify(fs.readdir);
 
+const JPEG = require('jpeg-js');
+
 router.post('/', async (request, response) => {
+    Jimp.decoders['image/jpeg'] = (data) => JPEG.decode(data, { maxMemoryUsageInMB: 1024 });
     const {width} = request.body;
     if ( !width ) {
         response.status(400).send({"validation_error": "desired width is mandatory"});
     }
     const quality = request.body.quality || 100;
     const numberPrefixOnly = request.body.numberPrefixOnly || false;
+    const outputImgExt = request.body.outputImgExt || undefined;
 
     const imgDir = request.body.imgDir || 'images';//fallback to images in input folder if no path is provided
     const outputImgDir = `${imgDir}/resized`;
@@ -24,24 +28,27 @@ router.post('/', async (request, response) => {
 
     files = files.filter(file => {
         if ( numberPrefixOnly ) {
-            return file.name.match(/^\d/) && file.name.match(/\.(jpe?g|png|gif)$/)
+            return file.name.match(/^\d/) && file.name.match(/\.(jpe?g|png|gif|JPG)$/)
         } else {
-            return file.name.match(/\.(jpe?g|png|gif)$/)
+            return file.name.match(/\.(jpe?g|png|gif|JPG)$/)
         }
     });
 
     for ( const file of files ) {
         console.log('Processing image - ', file.name);
-        const image = await Jimp.read(`${imgDir}/${file.name}`);
+        const fileName = file.name;
+        const dotIndex = fileName.lastIndexOf('.');
+        const name = fileName.substring(0, dotIndex);
+        const extension = outputImgExt || fileName.substring(dotIndex, fileName.length);
+
+        const image = await Jimp.read(`${imgDir}/${fileName}`);
         await image.resize(width, Jimp.AUTO);
         await image.quality(quality);
         let newFileName = '';
-        if ( file.name.match(/^\d/) ) {
-            const photoNumber = file.name.substring(0, file.name.indexOf('-'));
-            newFileName = `${photoNumber}-${width}x${image.bitmap.height}-${file.name.substring(file.name.indexOf('-') + 1, file.length)}`;
-        } else {
-            newFileName = `${width}x${image.bitmap.height}-${file.name}`;
-        }
+        let fileNameStartsWithIntegerFollowedByHyphen = fileName.match(/^\d+-/);
+
+        newFileName = `${name}-${width}x${image.bitmap.height}.${extension}`;
+
 
         await image.writeAsync(`${outputImgDir}/${newFileName}`);
         console.log(`${outputImgDir}/${newFileName}`);

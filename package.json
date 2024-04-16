@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon  --inspect=9230 ./bin/www"
+    "start": "nodemon  --max-old-space-size=4096 --inspect=9230 ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
